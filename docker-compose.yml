@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=bookings
+      - DB_USER=bookings_user
+      - DB_PASSWORD=bookings_password
+    networks:
+      - hotel-network
+
+  db:
+    image: mariadb:10.6
+    restart: always
+    environment:
+      - MYSQL_DATABASE=bookings
+      - MYSQL_USER=bookings_user
+      - MYSQL_PASSWORD=bookings_password
+      - MYSQL_ROOT_PASSWORD=root_password
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - hotel-network
+
+volumes:
+  mariadb_data:
+
+
+networks:
+  hotel-network:
+    driver: bridge
